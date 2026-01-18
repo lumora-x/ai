@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LumoraX - Discover AI Tools & Insights</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            background: rgba(15, 12, 41, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 1rem 5%;
+            background: rgba(15, 12, 41, 0.95);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .login-btn, .signup-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .login-btn:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .signup-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .user-menu {
+            position: relative;
+            display: none;
+        }
+
+        .user-menu.active {
+            display: block;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            padding: 0.8rem 1rem;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .dropdown-menu a:hover, .dropdown-menu button:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .switch-auth {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .switch-auth a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .switch-auth a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            color: #ff5252;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .hero {
+            padding: 12rem 5% 8rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .cta-button {
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease 0.4s both;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .categories {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap 0.3s ease;
+        }
+
+        .card:hover .card-link {
+            gap: 1rem;
+        }
+
+        .features {
+            padding: 5rem 5%;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .features-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-item p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        footer {
+            padding: 3rem 5%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0.6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo">LumoraX</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <div class="auth-buttons" id="authButtons">
+                <button class="login-btn" onclick="openLoginModal()">Login</button>
+                <button class="signup-btn" onclick="openSignupModal()">Sign Up</button>
+            </div>
+            <div class="user-menu" id="userMenu">
+                <div class="user-avatar" onclick="toggleDropdown()" id="userAvatar">U</div>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="#profile">My Profile</a>
+                    <a href="#saved">Saved Articles</a>
+                    <a href="#settings">Settings</a>
+                    <button onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <h1>Discover AI Tools That Transform Your Life</h1>
+        <p>Explore curated collections of cutting-edge AI tools for students, professionals, and entrepreneurs</p>
+        <button class="cta-button" onclick="document.getElementById('categories').scrollIntoView({behavior: 'smooth'})">
+            Explore Categories
+        </button>
+    </section>
+
+    <section class="categories" id="categories">
+        <h2 class="section-title">Featured Categories</h2>
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">🎓</div>
+                <h3>AI Tools for Students</h3>
+                <p>Discover powerful AI tools to enhance your learning, boost productivity, and ace your studies with smart technology.</p>
+                <a href="#" class="card-link">Explore Tools →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">💰</div>
+                <h3>AI Tools to Earn Money</h3>
+                <p>Unlock income opportunities with AI tools designed for freelancers, content creators, and entrepreneurs.</p>
+                <a href="#" class="card-link">Start Earning →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎨</div>
+                <h3>Creative AI Tools</h3>
+                <p>Transform your creative workflow with AI-powered design, art, music, and video generation tools.</p>
+                <a href="#" class="card-link">Get Creative →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h3>Business & Productivity</h3>
+                <p>Streamline your business operations with AI tools for analytics, automation, and team collaboration.</p>
+                <a href="#" class="card-link">Boost Productivity →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">✍️</div>
+                <h3>Writing & Content</h3>
+                <p>Elevate your writing with AI assistants for copywriting, editing, SEO optimization, and content creation.</p>
+                <a href="#" class="card-link">Write Better →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🤖</div>
+                <h3>Development Tools</h3>
+                <p>Code smarter and faster with AI-powered development tools, debugging assistants, and automation.</p>
+                <a href="#" class="card-link">Build Faster →</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <h2 class="section-title">Why Choose LumoraX?</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <h4>Curated Selection</h4>
+                <p>Hand-picked AI tools tested and verified for quality and effectiveness</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📚</div>
+                <h4>In-Depth Guides</h4>
+                <p>Detailed tutorials and guides to help you master each tool</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔄</div>
+                <h4>Regular Updates</h4>
+                <p>Stay current with the latest AI tools and technologies</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">💡</div>
+                <h4>Expert Insights</h4>
+                <p>Professional tips and best practices from AI experts</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 LumoraX. Empowering your journey with AI technology.</p>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('loginModal')">&times;</button>
+            <h2>Welcome Back</h2>
+            <div class="error-message" id="loginError"></div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+            <div class="switch-auth">
+                Don't have an account? <a onclick="switchToSignup()">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal" id="signupModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('signupModal')">&times;</button>
+            <h2>Create Account</h2>
+            <div class="error-message" id="signupError"></div>
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required placeholder="Create a password" minlength="6">
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+            <div class="switch-auth">
+                Already have an account? <a onclick="switchToLogin()">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       // Add this JavaScript to your index.html (replace the authentication section)
+
+// API Configuration
+const API_URL = 'https://lumorax-backend.onrender.com'; // Change this when deploying
+
+// Helper function to make API calls
+async function apiCall(endpoint, method = 'GET', data = null) {
+  const options = {
+    method,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  // Add token if exists
+  const token = getToken();
+  if (token) {
+    options.headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  // Add body if data exists
+  if (data) {
+    options.body = JSON.stringify(data);
+  }
+
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, options);
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.message || 'Something went wrong');
+    }
+    
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Token management
+function saveToken(token) {
+  localStorage.setItem('lumorax_token', token);
+}
+
+function getToken() {
+  return localStorage.getItem('lumorax_token');
+}
+
+function removeToken() {
+  localStorage.removeItem('lumorax_token');
+}
+
+function saveUser(user) {
+  localStorage.setItem('lumorax_user', JSON.stringify(user));
+}
+
+function getUser() {
+  const user = localStorage.getItem('lumorax_user');
+  return user ? JSON.parse(user) : null;
+}
+
+function removeUser() {
+  localStorage.removeItem('lumorax_user');
+}
+
+// Initialize on page load
+window.addEventListener('load', async () => {
+  await checkLoginStatus();
+});
+
+// Check if user is logged in
+async function checkLoginStatus() {
+  const token = getToken();
+  
+  if (token) {
+    try {
+      // Verify token with backend
+      const response = await apiCall('/auth/me');
+      
+      if (response.success) {
+        currentUser = response.user;
+        saveUser(currentUser);
+        showUserMenu();
+      } else {
+        // Token invalid, clear everything
+        await logout();
+      }
+    } catch (error) {
+      // Token expired or invalid
+      await logout();
+    }
+  }
+}
+
+// Handle Signup
+async function handleSignup(event) {
+  event.preventDefault();
+  
+  const name = document.getElementById('signupName').value;
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+
+  try {
+    const response = await apiCall('/auth/signup', 'POST', {
+      name,
+      email,
+      password
+    });
+
+    if (response.success) {
+      // Save token and user
+      saveToken(response.token);
+      saveUser(response.user);
+      currentUser = response.user;
+      
+      showUserMenu();
+      closeModal('signupModal');
+      showSuccessMessage(response.message);
+      
+      // Clear form
+      document.getElementById('signupName').value = '';
+      document.getElementById('signupEmail').value = '';
+      document.getElementById('signupPassword').value = '';
+    }
+  } catch (error) {
+    showError('signupError', error.message);
+  }
+}
+
+// Handle Login
+async function handleLogin(event) {
+  event.preventDefault();
+  
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+
+  try {
+    const response = await apiCall('/auth/login', 'POST', {
+      email,
+      password
+    });
+
+    if (response.success) {
+      // Save token and user
+      saveToken(response.token);
+      saveUser(response.user);
+      currentUser = response.user;
+      
+      showUserMenu();
+      closeModal('loginModal');
+      showSuccessMessage(response.message);
+      
+      // Clear form
+      document.getElementById('loginEmail').value = '';
+      document.getElementById('loginPassword').value = '';
+    }
+  } catch (error) {
+    showError('loginError', error.message);
+  }
+}
+
+// Logout
+async function logout() {
+  removeToken();
+  removeUser();
+  currentUser = null;
+  hideUserMenu();
+  showSuccessMessage('Logged out successfully');
+}
+
+// Show/Hide UI elements
+function showUserMenu() {
+  document.getElementById('authButtons').style.display = 'none';
+  const userMenu = document.getElementById('userMenu');
+  userMenu.classList.add('active');
+  
+  if (currentUser) {
+    const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    document.getElementById('userAvatar').textContent = initials;
+  }
+}
+
+function hideUserMenu() {
+  document.getElementById('authButtons').style.display = 'flex';
+  document.getElementById('userMenu').classList.remove('active');
+}
+
+        // Initialize on page load
+        window.addEventListener('load', async () => {
+            await checkLoginStatus();
+        });
+
+        // Check if user is logged in
+        async function checkLoginStatus() {
+            const user = await getCurrentUser();
+            if (user) {
+                currentUser = user;
+                showUserMenu();
+            }
+        }
+
+        // Get current user from persistent storage
+        async function getCurrentUser() {
+            try {
+                const result = await window.storage.get('current_user');
+                return result ? JSON.parse(result.value) : null;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        // Save current user to persistent storage
+        async function saveCurrentUser(user) {
+            try {
+                await window.storage.set('current_user', JSON.stringify(user));
+            } catch (error) {
+                console.error('Error saving user:', error);
+            }
+        }
+
+        // Remove current user from storage
+        async function removeCurrentUser() {
+            try {
+                await window.storage.delete('current_user');
+            } catch (error) {
+                console.error('Error removing user:', error);
+            }
+        }
+
+        // Login Modal Functions
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('loginError').classList.remove('show');
+        }
+
+        function openSignupModal() {
+            document.getElementById('signupModal').classList.add('active');
+            document.getElementById('signupError').classList.remove('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function switchToSignup() {
+            closeModal('loginModal');
+            openSignupModal();
+        }
+
+        function switchToLogin() {
+            closeModal('signupModal');
+            openLoginModal();
+        }
+
+        // Handle Login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Get users from storage
+            const users = await getStoredUsers();
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                currentUser = {
+                    name: user.name,
+                    email: user.email
+                };
+                await saveCurrentUser(currentUser);
+                showUserMenu();
+                closeModal('loginModal');
+                showSuccessMessage('Login successful!');
+            } else {
+                showError('loginError', 'Invalid email or password');
+            }
+        }
+
+        // Handle Signup
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            const users = await getStoredUsers();
+            
+            // Check if user already exists
+            if (users.find(u => u.email === email)) {
+                showError('signupError', 'An account with this email already exists');
+                return;
+            }
+
+            // Create new user
+            const newUser = { name, email, password };
+            users.push(newUser);
+            await saveUsers(users);
+
+            currentUser = { name, email };
+            await saveCurrentUser(currentUser);
+            showUserMenu();
+            closeModal('signupModal');
+            showSuccessMessage('Account created successfully!');
+        }
+
+        // Storage functions (using persistent storage)
+        async function getStoredUsers() {
+            try {
+                const result = await window.storage.get('users_database');
+                return result ? JSON.parse(result.value) : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        async function saveUsers(users) {
+            try {
+                await window.storage.set('users_database', JSON.stringify(users));
+            } catch (error) {
+                console.error('Error saving users:', error);
+            }
+        }
+
+        // Show/Hide UI elements
+        function showUserMenu() {
+            document.getElementById('authButtons').style.display = 'none';
+            const userMenu = document.getElementById('userMenu');
+            userMenu.classList.add('active');
+            
+            // Set user initials
+            if (currentUser) {
+                const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('userAvatar').textContent = initials;
+            }
+        }
+
+        function hideUserMenu() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userMenu').classList.remove('active');
+        }
+
+        // Dropdown toggle
+        function toggleDropdown() {
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!e.target.matches('.user-avatar')) {
+                const dropdown = document.getElementById('dropdownMenu');
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        });
+
+        // Logout
+        async function logout() {
+            currentUser = null;
+            await removeCurrentUser();
+            hideUserMenu();
+            showSuccessMessage('Logged out successfully');
+        }
+
+        // Error handling
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        // Success message
+        function showSuccessMessage(message) {
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: rgba(76, 175, 80, 0.9);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                z-index: 3000;
+                animation: slideInRight 0.3s ease;
+            `;
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+
+            setTimeout(() => {
+                successDiv.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => successDiv.remove(), 300);
+            }, 3000);
+        }
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.width = Math.random() * 100 + 50 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = Math.random() * 10 + 10 + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Smooth scroll for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Card click animation
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('card-link')) {
+                    const link = this.querySelector('.card-link');
+                    if (link) {
+                        link.click();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
